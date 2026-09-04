@@ -9,6 +9,7 @@ import net.jqwik.api.Combinators;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import net.jqwik.api.Provide;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Property-based tests for {@link AvailabilityCalculator}.
@@ -34,6 +35,20 @@ class AvailabilityProperties {
     }
 
     // --- Milestone 1: add your stronger property here ---
+    @Property
+    void everyMinBookedOrFree(@ForAll("scenarios") Scenario s) {
+        List<TimeInterval> free = calc.freeSlots(s.dayStart(), s.dayEnd(), s.bookings());
+
+        for (int minute = s.dayStart(); minute < s.dayEnd(); minute++) {
+            final int m = minute;
+            boolean booked = s.bookings().stream().anyMatch(b -> b.start() <= m && m < b.end());
+
+            boolean reportedFree = free.stream().anyMatch(slot -> slot.start() <= m && m < slot.end());
+
+            assertTrue(booked ^ reportedFree,
+                () -> "minute " + m + " must be either booked or free; bookings=" + s.bookings() + ", free=" + free);
+        }
+    }
 
     /** Generates a business day plus a list of bookings (possibly unsorted, overlapping, or outside hours). */
     @Provide
