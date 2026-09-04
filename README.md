@@ -35,3 +35,10 @@ green once you fix it.
 - Setup: `SETUP.md`
 
 See the Lab 2 handout on the course page for the three milestones you show a TA.
+
+
+Gap 1: No test case for empty bookings (this would've shown the error where the entire business day should've been free), controlability gap
+
+Gap 2: All of the test cases that have assertEquals have the last booking run till the end of the day, so they were never running an equals check on anything that had free after the last booking of the day (which would've exposed the error in an assertEquals check), controllability gap.
+
+Gap 3: returnedSlotsNeverOverlapBooking checks the to make sure that the return free gap slots don't overlap the booked slots, but doesn't make sure that the free gap slots it finds actually encompass the entire rest of the day (which they don;t for anything after the last booking), observability gap.
